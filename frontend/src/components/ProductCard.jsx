@@ -3,6 +3,8 @@ import { ShoppingCart } from "lucide-react";
 import { useUserStore } from "../stores/useUserStore";
 import { useCartStore } from "../stores/useCartStore";
 import { Link, useNavigate } from "react-router-dom";
+import { Heart } from "lucide-react";
+import { useWishlistStore } from "../stores/useWishlistStore";
 
 const ProductCard = ({ product }) => {
 
@@ -10,6 +12,7 @@ const ProductCard = ({ product }) => {
 	const { addToCart } = useCartStore();
 
 	const navigate = useNavigate();
+	const { addToWishlist } = useWishlistStore();
 
 	const handleAddToCart = async (e) => {
 
@@ -54,8 +57,24 @@ const ProductCard = ({ product }) => {
 						src={product.image}
 						alt="product image"
 					/>
+					<button
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
 
-					<div className="absolute inset-0 bg-black bg-opacity-20" />
+							if (!user) {
+								toast.error("Please login first");
+								return;
+							}
+
+							addToWishlist(product._id);
+						}}
+						className="absolute top-3 right-3 z-20 bg-black/70 p-2 rounded-full hover:bg-red-500 transition"
+					>
+						<Heart size={20} className="text-white" />
+					</button>
+
+					<div className="absolute inset-0 bg-black bg-opacity-20 z-10" />
 
 				</div>
 
