@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useUserStore } from "../stores/useUserStore";
 import { useCartStore } from "../stores/useCartStore";
 import { useWishlistStore } from "../stores/useWishlistStore";
+import SearchBar from "./SearchBar";
 
 const Navbar = () => {
 	const { user, logout } = useUserStore();
@@ -19,6 +20,7 @@ const Navbar = () => {
 					</Link>
 
 					<nav className='flex flex-wrap items-center gap-4'>
+						<SearchBar />
 						<Link
 							to={"/"}
 							className='text-gray-300 hover:text-emerald-400 transition duration-300

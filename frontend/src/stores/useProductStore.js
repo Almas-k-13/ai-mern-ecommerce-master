@@ -150,4 +150,28 @@ export const useProductStore = create((set) => ({
 			});
 		}
 	},
+	searchProducts: async (query) => {
+
+		set({ loading: true });
+
+		try {
+
+			const response = await axios.get(
+				`/products/search?query=${query}`
+			);
+
+			set({
+				products: response.data.products,
+				loading: false,
+			});
+
+		} catch (error) {
+
+			console.log(error);
+
+			set({
+				loading: false,
+			});
+		}
+	},
 }));

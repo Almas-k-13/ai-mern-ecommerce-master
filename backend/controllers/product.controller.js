@@ -153,3 +153,31 @@ async function updateFeaturedProductsCache() {
 		console.log("error in update cache function");
 	}
 }
+
+export const searchProducts = async (req, res) => {
+
+	try {
+
+		const { query } = req.query;
+
+		const products = await Product.find({
+
+			name: {
+				$regex: query,
+				$options: "i",
+			},
+		});
+
+		res.status(200).json({
+			products,
+		});
+
+	} catch (error) {
+
+		console.log(error);
+
+		res.status(500).json({
+			message: "Server Error",
+		});
+	}
+};

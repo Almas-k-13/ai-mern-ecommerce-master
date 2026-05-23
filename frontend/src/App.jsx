@@ -18,6 +18,7 @@ import PurchaseCancelPage from "./pages/PurchaseCancelPage";
 import AiAssistant from "./components/AiAssistant";
 import ProductPage from "./pages/ProductPage";
 import WishlistPage from "./pages/WishlistPage";
+import SearchPage from "./pages/SearchPage";
 
 function App() {
 	const { user, checkAuth, checkingAuth } = useUserStore();
@@ -64,6 +65,10 @@ function App() {
 					<Route
 						path="/wishlist"
 						element={user ? <WishlistPage /> : <Navigate to="/login" />}
+					/>
+					<Route
+						path="/search/:query"
+						element={<SearchPage />}
 					/>
 				</Routes>
 			</div>
