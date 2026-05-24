@@ -19,6 +19,7 @@ import AiAssistant from "./components/AiAssistant";
 import ProductPage from "./pages/ProductPage";
 import WishlistPage from "./pages/WishlistPage";
 import SearchPage from "./pages/SearchPage";
+import MyOrdersPage from "./pages/MyOrdersPage";
 
 function App() {
 	const { user, checkAuth, checkingAuth } = useUserStore();
@@ -70,6 +71,7 @@ function App() {
 						path="/search/:query"
 						element={<SearchPage />}
 					/>
+					<Route path="/my-orders" element={<MyOrdersPage />} />
 				</Routes>
 			</div>
 			<AiAssistant />

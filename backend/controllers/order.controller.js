@@ -1,5 +1,27 @@
 import Order from "../models/order.model.js";
 
+export const getMyOrders = async (req, res) => {
+	try {
+		const orders = await Order.find({
+			user: req.user._id,
+		})
+			.populate("products.product")
+			.sort({ createdAt: -1 });
+
+		res.status(200).json({
+			success: true,
+			orders,
+		});
+	} catch (error) {
+		console.log("Get my orders error:", error);
+
+		res.status(500).json({
+			success: false,
+			message: "Server Error",
+		});
+	}
+};
+
 export const getAllOrders = async (req, res) => {
 
     try {

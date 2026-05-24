@@ -1,4 +1,4 @@
-import { ShoppingCart, UserPlus, LogIn, LogOut, Lock, Heart } from "lucide-react";
+import { ShoppingCart, UserPlus, LogIn, LogOut, Lock, Heart, Package } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useUserStore } from "../stores/useUserStore";
 import { useCartStore } from "../stores/useCartStore";
@@ -82,6 +82,17 @@ const Navbar = () => {
 							>
 								<Lock className='inline-block mr-1' size={18} />
 								<span className='hidden sm:inline'>Dashboard</span>
+							</Link>
+						)}
+						{user && (
+							<Link
+								to={"/my-orders"}
+								className='text-gray-300 hover:text-emerald-400 transition duration-300 flex items-center'
+							>
+								<Package className='mr-1' size={20} />
+								<span className='hidden sm:inline'>
+									My Orders
+								</span>
 							</Link>
 						)}
 
