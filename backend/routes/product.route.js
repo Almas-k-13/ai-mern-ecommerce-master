@@ -9,6 +9,7 @@ import {
 	toggleFeaturedProduct,
 	searchProducts,
 	addReview,
+	updateProduct,
 } from "../controllers/product.controller.js";
 import { adminRoute, protectRoute } from "../middleware/auth.middleware.js";
 
@@ -28,6 +29,7 @@ router.post(
 	protectRoute,
 	addReview
 );
+router.put("/:id", protectRoute, adminRoute, updateProduct);
 
 
 export default router;

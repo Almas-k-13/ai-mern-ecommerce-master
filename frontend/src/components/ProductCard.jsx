@@ -1,11 +1,11 @@
 import toast from "react-hot-toast";
-import { ShoppingCart, Heart } from "lucide-react";
+import { ShoppingCart, Heart, Edit } from "lucide-react";
 import { useUserStore } from "../stores/useUserStore";
 import { useCartStore } from "../stores/useCartStore";
 import { Link, useNavigate } from "react-router-dom";
 import { useWishlistStore } from "../stores/useWishlistStore";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, setEditingProduct }) => {
 
 	const { user } = useUserStore();
 
@@ -127,7 +127,30 @@ const ProductCard = ({ product }) => {
 						/>
 
 					</button>
+					<button
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
 
+							setEditingProduct(product);
+						}}
+						className="
+								absolute
+								top-16
+								right-3
+								z-20
+								bg-yellow-500
+								p-2
+								rounded-full
+								hover:bg-yellow-600
+								transition
+							"
+					>
+						<Edit
+							size={20}
+							className="text-white"
+						/>
+					</button>
 					<div className="absolute inset-0 bg-black bg-opacity-20 z-10" />
 
 				</div>

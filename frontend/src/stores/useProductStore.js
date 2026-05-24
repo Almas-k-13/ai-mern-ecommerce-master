@@ -174,4 +174,34 @@ export const useProductStore = create((set) => ({
 			});
 		}
 	},
+	updateProduct: async (id, updatedData) => {
+
+		try {
+
+			const res = await axios.put(
+				`/products/${id}`,
+				updatedData
+			);
+
+			set((state) => ({
+
+				products: state.products.map((product) =>
+
+					product._id === id
+						? res.data
+						: product
+				),
+
+			}));
+
+			toast.success("Product updated successfully");
+
+		} catch (error) {
+
+			toast.error(
+				error.response?.data?.message ||
+				"Something went wrong"
+			);
+		}
+	},
 }));

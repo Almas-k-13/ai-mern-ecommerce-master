@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
-import { Trash, Star } from "lucide-react";
+import { Trash, Star, Edit } from "lucide-react";
 import { useProductStore } from "../stores/useProductStore";
 
-const ProductsList = () => {
+const ProductsList = ({ setEditingProduct }) => {
 	const { deleteProduct, toggleFeaturedProduct, products } = useProductStore();
 
 	return (
@@ -79,10 +79,9 @@ const ProductsList = () => {
 										rounded-full
 										text-xs
 										font-semibold
-										${
-											product.stock > 0
-												? "bg-green-100 text-green-800"
-												: "bg-red-100 text-red-800"
+										${product.stock > 0
+											? "bg-green-100 text-green-800"
+											: "bg-red-100 text-red-800"
 										}
 									`}
 								>
@@ -103,17 +102,26 @@ const ProductsList = () => {
 									onClick={() =>
 										toggleFeaturedProduct(product._id)
 									}
-									className={`p-2 rounded-full transition ${
-										product.isFeatured
+									className={`p-2 rounded-full transition ${product.isFeatured
 											? "bg-yellow-400 text-gray-900"
 											: "bg-gray-600 text-gray-300"
-									}`}
+										}`}
 								>
 									<Star className='h-5 w-5' />
 								</button>
 							</td>
 
-							<td className='px-6 py-4 whitespace-nowrap text-sm font-medium'>
+							<td className='px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-4'>
+
+								<button
+									onClick={() =>
+										setEditingProduct(product)
+									}
+									className='text-yellow-400 hover:text-yellow-300 transition'
+								>
+									<Edit className='h-5 w-5' />
+								</button>
+
 								<button
 									onClick={() =>
 										deleteProduct(product._id)
@@ -122,6 +130,7 @@ const ProductsList = () => {
 								>
 									<Trash className='h-5 w-5' />
 								</button>
+
 							</td>
 						</tr>
 					))}

@@ -91,6 +91,23 @@ export const deleteProduct = async (req, res) => {
 	}
 };
 
+export const updateProduct = async (req, res) => {
+	try {
+		const { id } = req.params;
+
+		const updatedProduct = await Product.findByIdAndUpdate(
+			id,
+			req.body,
+			{ new: true }
+		);
+
+		res.status(200).json(updatedProduct);
+	} catch (error) {
+		console.log("Error in updateProduct controller", error.message);
+		res.status(500).json({ message: "Server Error", error: error.message });
+	}
+};
+
 export const getRecommendedProducts = async (req, res) => {
 
 	try {
