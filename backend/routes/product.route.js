@@ -8,6 +8,7 @@ import {
 	getRecommendedProducts,
 	toggleFeaturedProduct,
 	searchProducts,
+	addReview,
 } from "../controllers/product.controller.js";
 import { adminRoute, protectRoute } from "../middleware/auth.middleware.js";
 
@@ -22,6 +23,11 @@ router.get("/search", searchProducts);
 router.post("/", protectRoute, adminRoute, createProduct);
 router.patch("/:id", protectRoute, adminRoute, toggleFeaturedProduct);
 router.delete("/:id", protectRoute, adminRoute, deleteProduct);
+router.post(
+	"/:id/review",
+	protectRoute,
+	addReview
+);
 
 
 export default router;
