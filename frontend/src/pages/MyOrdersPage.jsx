@@ -3,140 +3,146 @@ import axios from "../lib/axios";
 
 const MyOrdersPage = () => {
 
-	const [orders, setOrders] = useState([]);
+    const [orders, setOrders] = useState([]);
 
-	const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
 
-	useEffect(() => {
+    useEffect(() => {
 
-		const fetchOrders = async () => {
+        const fetchOrders = async () => {
 
-			try {
+            try {
 
-				const res = await axios.get("/orders/my-orders");
+                const res = await axios.get(
+                    "/orders/my-orders"
+                );
 
-				setOrders(res.data.orders);
+                setOrders(res.data.orders);
 
-			} catch (error) {
+            } catch (error) {
 
-				console.log(error);
+                console.log(error);
+            }
+        };
 
-			} finally {
+        fetchOrders();
 
-				setLoading(false);
-			}
-		};
+        const interval = setInterval(() => {
 
-		fetchOrders();
+            fetchOrders();
 
-	}, []);
+        }, 3000);
 
-	if (loading) {
+        return () => clearInterval(interval);
 
-		return (
-			<div className="text-white text-center mt-20">
-				Loading...
-			</div>
-		);
-	}
+    }, []);
 
-	return (
+    if (loading) {
 
-		<div className="min-h-screen text-white p-6">
+        return (
+            <div className="text-white text-center mt-20">
+                Loading...
+            </div>
+        );
+    }
 
-			<h1 className="text-4xl font-bold text-emerald-400 mb-8">
-				My Orders
-			</h1>
+    return (
 
-			<div className="space-y-6">
+        <div className="min-h-screen text-white p-6">
 
-				{orders.length === 0 ? (
+            <h1 className="text-4xl font-bold text-emerald-400 mb-8">
+                My Orders
+            </h1>
 
-					<p>No orders found</p>
+            <div className="space-y-6">
 
-				) : (
+                {orders.length === 0 ? (
 
-					orders.map((order) => (
+                    <p>No orders found</p>
 
-						<div
-							key={order._id}
-							className="bg-gray-800 p-6 rounded-xl border border-gray-700"
-						>
+                ) : (
 
-							<div className="flex justify-between mb-4">
+                    orders.map((order) => (
 
-								<div>
+                        <div
+                            key={order._id}
+                            className="bg-gray-800 p-6 rounded-xl border border-gray-700"
+                        >
 
-									<p className="text-gray-400">
-										Order ID
-									</p>
+                            <div className="flex justify-between mb-4">
 
-									<p className="text-sm">
-										{order._id}
-									</p>
+                                <div>
 
-								</div>
+                                    <p className="text-gray-400">
+                                        Order ID
+                                    </p>
 
-								<div>
+                                    <p className="text-sm">
+                                        {order._id}
+                                    </p>
 
-									<p className="text-gray-400">
-										Status
-									</p>
+                                </div>
 
-									<p className="text-emerald-400 font-semibold">
-										{order.orderStatus}
-									</p>
+                                <div>
 
-								</div>
+                                    <p className="text-gray-400">
+                                        Status
+                                    </p>
 
-							</div>
+                                    <p className="text-emerald-400 font-semibold">
+                                        {order.orderStatus}
+                                    </p>
 
-							<div className="space-y-4">
+                                </div>
 
-								{order.products.map((item) => (
+                            </div>
 
-									<div
-										key={item._id}
-										className="flex items-center gap-4 border-b border-gray-700 pb-4"
-									>
+                            <div className="space-y-4">
 
-										<img
-											src={item.product.image}
-											alt={item.product.name}
-											className="w-20 h-20 rounded-lg object-cover"
-										/>
+                                {order.products.map((item) => (
 
-										<div>
+                                    <div
+                                        key={item._id}
+                                        className="flex items-center gap-4 border-b border-gray-700 pb-4"
+                                    >
 
-											<h2 className="font-semibold">
-												{item.product.name}
-											</h2>
+                                        <img
+                                            src={item.product.image}
+                                            alt={item.product.name}
+                                            className="w-20 h-20 rounded-lg object-cover"
+                                        />
 
-											<p className="text-gray-400">
-												Quantity: {item.quantity}
-											</p>
+                                        <div>
 
-										</div>
+                                            <h2 className="font-semibold">
+                                                {item.product.name}
+                                            </h2>
 
-									</div>
-								))}
-							</div>
+                                            <p className="text-gray-400">
+                                                Quantity: {item.quantity}
+                                            </p>
 
-							<div className="mt-4 text-right">
+                                        </div>
 
-								<p className="text-2xl font-bold text-emerald-400">
-									₹{order.totalAmount}
-								</p>
+                                    </div>
+                                ))}
+                            </div>
 
-							</div>
+                            <div className="mt-4 text-right">
 
-						</div>
-					))
-				)}
-			</div>
+                                <p className="text-2xl font-bold text-emerald-400">
+                                    ₹{order.totalAmount}
+                                </p>
 
-		</div>
-	);
+                            </div>
+
+                        </div>
+                    ))
+                )}
+            </div>
+
+        </div>
+    );
 };
 
 export default MyOrdersPage;

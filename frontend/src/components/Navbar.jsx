@@ -84,7 +84,7 @@ const Navbar = () => {
 								<span className='hidden sm:inline'>Dashboard</span>
 							</Link>
 						)}
-						{user && (
+						{user && !isAdmin && (
 							<Link
 								to={"/my-orders"}
 								className='text-gray-300 hover:text-emerald-400 transition duration-300 flex items-center'

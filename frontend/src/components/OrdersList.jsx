@@ -1,21 +1,45 @@
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useOrderStore } from "../stores/useOrderStore";
+import toast from "react-hot-toast";
 
 const OrdersList = () => {
+
 	const {
 		orders,
 		fetchAllOrders,
 		updateOrderStatus,
 	} = useOrderStore();
 
-
-
 	useEffect(() => {
 		fetchAllOrders();
 	}, [fetchAllOrders]);
 
+	const handleStatusChange = async (
+		orderId,
+		status
+	) => {
 
+		try {
+
+			await updateOrderStatus(
+				orderId,
+				status
+			);
+
+			toast.success(
+				"Order status updated"
+			);
+
+		} catch (error) {
+
+			console.log(error);
+
+			toast.error(
+				"Failed to update status"
+			);
+		}
+	};
 
 	return (
 		<motion.div
@@ -38,12 +62,14 @@ const OrdersList = () => {
 				Orders List
 			</h2>
 
-
-
 			<div className="overflow-x-auto">
+
 				<table className="min-w-full divide-y divide-gray-700">
+
 					<thead>
+
 						<tr>
+
 							<th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">
 								User
 							</th>
@@ -63,152 +89,135 @@ const OrdersList = () => {
 							<th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase">
 								Status
 							</th>
+
 						</tr>
+
 					</thead>
 
-
-
 					<tbody className="divide-y divide-gray-700">
-						{
-							orders.map((order) => (
 
-								<tr
-									key={order._id}
-									className="hover:bg-gray-700/40 transition"
-								>
+						{orders.map((order) => (
 
-									<td className="px-6 py-4 whitespace-nowrap">
+							<tr
+								key={order._id}
+								className="hover:bg-gray-700/40 transition"
+							>
 
-										<div>
+								<td className="px-6 py-4 whitespace-nowrap">
 
-											<div className="text-sm font-medium text-white">
+									<div>
 
-												{order.user?.name}
+										<div className="text-sm font-medium text-white">
+											{order.user?.name}
+										</div>
 
-											</div>
+										<div className="text-sm text-gray-400">
+											{order.user?.email}
+										</div>
 
-											<div className="text-sm text-gray-400">
+									</div>
 
-												{order.user?.email}
+								</td>
 
-											</div>
+								<td className="px-6 py-4">
+
+									{order.products.map((item) => (
+
+										<div
+											key={item._id}
+											className="text-sm text-white mb-1"
+										>
+
+											{item.product?.name} x {item.quantity}
 
 										</div>
 
-									</td>
+									))}
 
+								</td>
 
+								<td className="px-6 py-4 text-emerald-400 font-semibold">
+									₹{order.totalAmount}
+								</td>
 
-									<td className="px-6 py-4">
-										{
-											order.products.map((item) => (
+								<td className="px-6 py-4">
 
-												<div
-													key={item._id}
-													className="text-sm text-white mb-1"
-												>
-
-													{
-														item.product?.name
-													}
-
-													{" "}
-
-													x
-
-													{" "}
-
-													{
-														item.quantity
-													}
-
-												</div>
-											))
-										}
-									</td>
-
-
-
-									<td className="px-6 py-4 text-emerald-400 font-semibold">
-										₹{order.totalAmount}
-									</td>
-
-
-
-									<td className="px-6 py-4">
-										<span
-											className={`
-												px-3
-												py-1
-												inline-flex
-												text-xs
-												leading-5
-												font-semibold
-												rounded-full
-												${order.paymentStatus === "Paid"
-													? "bg-green-100 text-green-800"
-													: "bg-yellow-100 text-yellow-800"
-												}
-											`}
-										>
-											{order.paymentStatus}
-										</span>
-
-									</td>
-
-
-									<td className="px-6 py-4">
-
-										<select
-
-											value={order.orderStatus}
-
-											onChange={(e) =>
-
-												updateOrderStatus(
-
-													order._id,
-
-													e.target.value
-												)
+									<span
+										className={`
+											px-3
+											py-1
+											inline-flex
+											text-xs
+											leading-5
+											font-semibold
+											rounded-full
+											${order.paymentStatus === "Paid"
+												? "bg-green-100 text-green-800"
+												: "bg-yellow-100 text-yellow-800"
 											}
+										`}
+									>
 
-											className="
-												bg-gray-700
-												text-white
-												p-2
-												rounded-lg
-												outline-none
-											"
-										>
+										{order.paymentStatus}
 
-											<option value="Pending">
-												Pending
-											</option>
+									</span>
 
-											<option value="Processing">
-												Processing
-											</option>
+								</td>
 
-											<option value="Shipped">
-												Shipped
-											</option>
+								<td className="px-6 py-4">
 
-											<option value="Delivered">
-												Delivered
-											</option>
+									<select
+										value={order.orderStatus}
+										onChange={(e) =>
+											handleStatusChange(
+												order._id,
+												e.target.value
+											)
+										}
+										className="
+											bg-gray-700
+											text-white
+											px-3
+											py-2
+											rounded-lg
+											outline-none
+										"
+									>
 
-											<option value="Cancelled">
-												Cancelled
-											</option>
-										</select>
-									</td>
-								</tr>
-							))
-						}
+										<option value="Pending">
+											Pending
+										</option>
+
+										<option value="Processing">
+											Processing
+										</option>
+
+										<option value="Shipped">
+											Shipped
+										</option>
+
+										<option value="Delivered">
+											Delivered
+										</option>
+
+										<option value="Cancelled">
+											Cancelled
+										</option>
+
+									</select>
+
+								</td>
+
+							</tr>
+
+						))}
+
 					</tbody>
+
 				</table>
+
 			</div>
+
 		</motion.div>
 	);
 };

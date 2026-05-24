@@ -24,16 +24,41 @@ export const useOrderStore = create((set) => ({
 
 
 
-	updateOrderStatus: async (id, status) => {
+	updateOrderStatus: async (
+		orderId,
+		status
+	) => {
 
 		try {
-			await axios.put(`/orders/${id}`, {
-				status,
-			});
-			toast.success("Order status updated");
+
+			const res = await axios.put(
+				`/orders/${orderId}`,
+				{
+					status,
+				}
+			);
+
+			set((state) => ({
+
+				orders: state.orders.map(
+					(order) =>
+
+						order._id === orderId
+
+							? {
+								...order,
+								orderStatus: status,
+							}
+
+							: order
+				),
+			}));
+
 		} catch (error) {
+
 			console.log(error);
-			toast.error("Failed to update status");
+
+			throw error;
 		}
 	},
 }));
