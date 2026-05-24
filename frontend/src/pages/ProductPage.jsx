@@ -211,6 +211,24 @@ const ProductPage = () => {
                     <p className="text-emerald-400 text-3xl mb-4">
                         ₹{product.price}
                     </p>
+                    <div className="mb-4">
+
+                        {
+                            product.stock > 0 ? (
+
+                                <span className="bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-full text-sm font-semibold">
+                                    In Stock : {product.stock}
+                                </span>
+
+                            ) : (
+
+                                <span className="bg-red-500/20 text-red-400 px-4 py-2 rounded-full text-sm font-semibold">
+                                    Out Of Stock
+                                </span>
+                            )
+                        }
+
+                    </div>
 
                     <p className="text-gray-300 mb-6 leading-relaxed">
                         {product.description}
@@ -232,25 +250,22 @@ const ProductPage = () => {
 
                     <button
                         onClick={handleAddToCart}
-                        className="
-							bg-emerald-500
-							hover:bg-emerald-600
-							px-6
-							py-3
-							rounded-lg
-							flex
-							items-center
-							gap-2
-							transition
-						"
+                        disabled={product.stock === 0}
+                        className={`px-6 py-3 rounded-lg flex items-center gap-2 ${product.stock === 0
+                                ? "bg-red-600 cursor-not-allowed"
+                                : "bg-emerald-500 hover:bg-emerald-600"
+                            }`}
                     >
 
                         <ShoppingCart size={20} />
 
-                        Add To Cart
+                        {
+                            product.stock === 0
+                                ? "Out Of Stock"
+                                : "Add To Cart"
+                        }
 
                     </button>
-
                 </div>
 
             </div>

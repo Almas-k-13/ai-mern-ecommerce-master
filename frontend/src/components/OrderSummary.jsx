@@ -85,6 +85,8 @@ const OrderSummary = () => {
 
 							window.location.href =
 								"/purchase-success";
+
+							window.location.reload();
 						}
 
 					} catch (error) {

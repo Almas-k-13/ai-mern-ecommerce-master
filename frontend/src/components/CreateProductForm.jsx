@@ -10,6 +10,7 @@ const CreateProductForm = () => {
 		name: "",
 		description: "",
 		price: "",
+		stock: "",
 		category: "",
 		image: "",
 	});
@@ -20,10 +21,19 @@ const CreateProductForm = () => {
 		e.preventDefault();
 		try {
 			await createProduct(newProduct);
-			setNewProduct({ name: "", description: "", price: "", category: "", image: "" });
+			setNewProduct({ name: "", description: "", price: "",stock: "", category: "", image: "" });
 		} catch {
 			console.log("error creating a product");
 		}
+	};
+	const handleChange = (e) => {
+
+		setNewProduct({
+
+			...newProduct,
+
+			[e.target.name]: e.target.value,
+		});
 	};
 
 	const handleImageChange = (e) => {
@@ -97,6 +107,21 @@ const CreateProductForm = () => {
 						className='mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm 
 						py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500
 						 focus:border-emerald-500'
+						required
+					/>
+				</div>
+				<div>
+					<label className='block text-sm font-medium text-gray-300 mb-1'>
+						Stock
+					</label>
+
+					<input
+						type='number'
+						name='stock'
+						value={newProduct.stock}
+						onChange={handleChange}
+						placeholder='Enter stock quantity'
+						className='w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white'
 						required
 					/>
 				</div>

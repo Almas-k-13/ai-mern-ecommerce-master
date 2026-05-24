@@ -24,6 +24,7 @@ router.get(
 );
 
 router.post("/", protectRoute, createOrder);
+router.get("/my-orders", protectRoute, getMyOrders);
 
 
 router.put(
@@ -33,7 +34,6 @@ router.put(
     updateOrderStatus
 );
 
-router.get("/my-orders", protectRoute, getMyOrders);
 
 
 export default router;

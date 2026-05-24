@@ -18,10 +18,13 @@ const MyOrdersPage = () => {
                 );
 
                 setOrders(res.data.orders);
+                setLoading(false);
 
             } catch (error) {
 
+
                 console.log(error);
+                setLoading(false);
             }
         };
 

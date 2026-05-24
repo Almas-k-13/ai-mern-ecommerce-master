@@ -92,26 +92,25 @@ export const deleteProduct = async (req, res) => {
 };
 
 export const getRecommendedProducts = async (req, res) => {
-	try {
-		const products = await Product.aggregate([
-			{
-				$sample: { size: 4 },
-			},
-			{
-				$project: {
-					_id: 1,
-					name: 1,
-					description: 1,
-					image: 1,
-					price: 1,
-				},
-			},
-		]);
 
-		res.json(products);
+	try {
+
+		const products = await Product.find({})
+			.select("-reviews")
+			.limit(4);
+
+		res.status(200).json(products);
+
 	} catch (error) {
-		console.log("Error in getRecommendedProducts controller", error.message);
-		res.status(500).json({ message: "Server error", error: error.message });
+
+		console.log(
+			"Error in getRecommendedProducts:",
+			error.message
+		);
+
+		res.status(500).json({
+			message: "Server Error",
+		});
 	}
 };
 
