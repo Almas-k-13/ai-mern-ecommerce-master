@@ -20,6 +20,7 @@ import ProductPage from "./pages/ProductPage";
 import WishlistPage from "./pages/WishlistPage";
 import SearchPage from "./pages/SearchPage";
 import MyOrdersPage from "./pages/MyOrdersPage";
+import ChatPage from "./pages/ChatPage";
 
 function App() {
 	const { user, checkAuth, checkingAuth } = useUserStore();
@@ -72,6 +73,10 @@ function App() {
 						element={<SearchPage />}
 					/>
 					<Route path="/my-orders" element={<MyOrdersPage />} />
+					<Route
+						path="/chat"
+						element={<ChatPage />}
+					/>
 				</Routes>
 			</div>
 			<AiAssistant />

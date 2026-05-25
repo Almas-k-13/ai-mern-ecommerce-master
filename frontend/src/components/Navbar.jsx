@@ -6,6 +6,7 @@ import {
 	Lock,
 	Heart,
 	Package,
+	MessageCircle,
 } from "lucide-react";
 
 import { Link } from "react-router-dom";
@@ -153,6 +154,29 @@ const Navbar = () => {
 
 							</Link>
 						)}
+
+						{/* Support */}
+						<Link
+							to={"/chat"}
+							className='text-gray-300 hover:text-emerald-400 transition duration-300 flex items-center'
+						>
+
+							<MessageCircle
+								className='mr-1'
+								size={20}
+							/>
+
+							<span className='hidden sm:inline'>
+
+								{
+									isAdmin
+										? "Live Chats"
+										: "Support"
+								}
+
+							</span>
+
+						</Link>
 
 						{/* Logout */}
 						{user ? (
