@@ -102,33 +102,35 @@ const MyOrdersPage = () => {
 
                             <div className="space-y-4">
 
-                                {order.products.map((item) => (
+                                {order.products
+                                    .filter((item) => item.product)
+                                    .map((item) => (
 
-                                    <div
-                                        key={item._id}
-                                        className="flex items-center gap-4 border-b border-gray-700 pb-4"
-                                    >
+                                        <div
+                                            key={item._id}
+                                            className="flex items-center gap-4 border-b border-gray-700 pb-4"
+                                        >
 
-                                        <img
-                                            src={item.product.image}
-                                            alt={item.product.name}
-                                            className="w-20 h-20 rounded-lg object-cover"
-                                        />
+                                            <img
+                                                src={item.product?.image}
+                                                alt={item.product?.name}
+                                                className="w-20 h-20 rounded-lg object-cover"
+                                            />
 
-                                        <div>
+                                            <div>
 
-                                            <h2 className="font-semibold">
-                                                {item.product.name}
-                                            </h2>
+                                                <h2 className="font-semibold">
+                                                    {item.product?.name || "Product Deleted"}
+                                                </h2>
 
-                                            <p className="text-gray-400">
-                                                Quantity: {item.quantity}
-                                            </p>
+                                                <p className="text-gray-400">
+                                                    Quantity: {item.quantity}
+                                                </p>
+
+                                            </div>
 
                                         </div>
-
-                                    </div>
-                                ))}
+                                    ))}
                             </div>
 
                             <div className="mt-4 text-right">
