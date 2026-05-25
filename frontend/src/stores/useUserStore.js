@@ -50,7 +50,7 @@ export const useUserStore = create((set, get) => ({
 		set({ loading: true });
 
 		try {
-
+// fix api url
 			const res = await axios.post("/auth/login", {
 				email,
 				password,
