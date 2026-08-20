@@ -1,9 +1,9 @@
 import express from "express";
 
 import {
-	addToWishlist,
-	getWishlist,
-	removeFromWishlist,
+  addToWishlist,
+  getWishlist,
+  removeFromWishlist,
 } from "../controllers/wishlist.controller.js";
 
 import { protectRoute } from "../middleware/auth.middleware.js";

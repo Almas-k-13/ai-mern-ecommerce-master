@@ -6,84 +6,47 @@ import { protectRoute } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.get(
-	"/",
-	protectRoute,
-	async (req, res) => {
+router.get("/", protectRoute, async (req, res) => {
+  try {
+    const messages = await Chat.find().populate("sender", "name email").sort({
+      createdAt: 1,
+    });
 
-		try {
+    res.status(200).json(messages);
+  } catch (error) {
+    console.log("GET CHAT ERROR:", error);
 
-			const messages = await Chat.find()
-				.populate(
-					"sender",
-					"name email"
-				)
-				.sort({
-					createdAt: 1,
-				});
+    res.status(500).json({
+      message: "Server Error",
+    });
+  }
+});
 
-			res.status(200).json(
-				messages
-			);
+router.post("/", protectRoute, async (req, res) => {
+  try {
+    const newMessage = new Chat({
+      sender: req.user._id,
 
-		} catch (error) {
+      message: req.body.message,
 
-			console.log(
-				"GET CHAT ERROR:",
-				error
-			);
+      role: req.user.role || "user",
+    });
 
-			res.status(500).json({
-				message: "Server Error",
-			});
-		}
-	}
-);
+    await newMessage.save();
 
-router.post(
-	"/",
-	protectRoute,
-	async (req, res) => {
+    const populatedMessage = await Chat.findById(newMessage._id).populate(
+      "sender",
+      "name email",
+    );
 
-		try {
+    res.status(201).json(populatedMessage);
+  } catch (error) {
+    console.log("POST CHAT ERROR:", error);
 
-			const newMessage = new Chat({
-
-				sender: req.user._id,
-
-				message: req.body.message,
-
-				role:
-					req.user.role ||
-					"user",
-			});
-
-			await newMessage.save();
-
-			const populatedMessage =
-				await Chat.findById(
-					newMessage._id
-				).populate(
-					"sender",
-					"name email"
-				);
-
-			res.status(201).json(
-				populatedMessage
-			);
-
-		} catch (error) {
-
-			console.log(
-				"POST CHAT ERROR:",
-				error
-			);
-
-			res.status(500).json({
-				message: "Server Error",
-			});
-		}
-	}
-);
+    res.status(500).json({
+      message: "Server Error",
+    });
+  }
+});
 
 export default router;

@@ -3,211 +3,162 @@ import axios from "../lib/axios";
 import { toast } from "react-hot-toast";
 
 export const useUserStore = create((set, get) => ({
+  user: null,
+  loading: false,
+  checkingAuth: true,
 
-	user: null,
-	loading: false,
-	checkingAuth: true,
+  signup: async ({ name, email, password, confirmPassword }) => {
+    set({ loading: true });
 
-	signup: async ({ name, email, password, confirmPassword }) => {
+    if (password !== confirmPassword) {
+      set({ loading: false });
 
-		set({ loading: true });
+      return toast.error("Passwords do not match");
+    }
 
-		if (password !== confirmPassword) {
+    try {
+      const res = await axios.post("/auth/signup", {
+        name,
+        email,
+        password,
+      });
 
-			set({ loading: false });
+      set({
+        user: res.data,
+        loading: false,
+      });
 
-			return toast.error("Passwords do not match");
-		}
+      toast.success("Account created successfully");
+    } catch (error) {
+      set({ loading: false });
 
-		try {
+      toast.error(error.response?.data?.message || "An error occurred");
+    }
+  },
 
-			const res = await axios.post("/auth/signup", {
-				name,
-				email,
-				password,
-			});
+  login: async (email, password) => {
+    set({ loading: true });
 
-			set({
-				user: res.data,
-				loading: false,
-			});
+    try {
+      // fix api url
+      const res = await axios.post("/auth/login", {
+        email,
+        password,
+      });
 
-			toast.success("Account created successfully");
+      set({
+        user: res.data,
+        loading: false,
+      });
 
-		} catch (error) {
+      toast.success("Login successful");
+    } catch (error) {
+      set({ loading: false });
 
-			set({ loading: false });
+      toast.error(error.response?.data?.message || "Invalid credentials");
+    }
+  },
 
-			toast.error(
-				error.response?.data?.message ||
-				"An error occurred"
-			);
-		}
-	},
+  logout: async () => {
+    try {
+      await axios.post("/auth/logout");
 
-	login: async (email, password) => {
+      set({
+        user: null,
+      });
 
-		set({ loading: true });
+      toast.success("Logged out");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Logout failed");
+    }
+  },
 
-		try {
-// fix api url
-			const res = await axios.post("/auth/login", {
-				email,
-				password,
-			});
+  checkAuth: async () => {
+    set({
+      checkingAuth: true,
+    });
 
-			set({
-				user: res.data,
-				loading: false,
-			});
+    try {
+      const response = await axios.get("/auth/profile");
 
-			toast.success("Login successful");
+      set({
+        user: response.data,
+        checkingAuth: false,
+      });
+    } catch (error) {
+      // Ignore 401 errors silently
 
-		} catch (error) {
+      if (error.response?.status !== 401) {
+        console.log(error);
+      }
 
-			set({ loading: false });
+      set({
+        user: null,
+        checkingAuth: false,
+      });
+    }
+  },
 
-			toast.error(
-				error.response?.data?.message ||
-				"Invalid credentials"
-			);
-		}
-	},
+  refreshToken: async () => {
+    if (get().checkingAuth) return;
 
-	logout: async () => {
+    set({
+      checkingAuth: true,
+    });
 
-		try {
+    try {
+      const response = await axios.post("/auth/refresh-token");
 
-			await axios.post("/auth/logout");
+      set({
+        checkingAuth: false,
+      });
 
-			set({
-				user: null,
-			});
+      return response.data;
+    } catch (error) {
+      set({
+        user: null,
+        checkingAuth: false,
+      });
 
-			toast.success("Logged out");
-
-		} catch (error) {
-
-			toast.error(
-				error.response?.data?.message ||
-				"Logout failed"
-			);
-		}
-	},
-
-	checkAuth: async () => {
-
-		set({
-			checkingAuth: true,
-		});
-
-		try {
-
-			const response = await axios.get("/auth/profile");
-
-			set({
-				user: response.data,
-				checkingAuth: false,
-			});
-
-		} catch (error) {
-
-			// Ignore 401 errors silently
-
-			if (error.response?.status !== 401) {
-
-				console.log(error);
-
-			}
-
-			set({
-				user: null,
-				checkingAuth: false,
-			});
-		}
-	},
-
-	refreshToken: async () => {
-
-		if (get().checkingAuth) return;
-
-		set({
-			checkingAuth: true,
-		});
-
-		try {
-
-			const response = await axios.post(
-				"/auth/refresh-token"
-			);
-
-			set({
-				checkingAuth: false,
-			});
-
-			return response.data;
-
-		} catch (error) {
-
-			set({
-				user: null,
-				checkingAuth: false,
-			});
-
-			throw error;
-		}
-	},
+      throw error;
+    }
+  },
 }));
-
-
 
 // AXIOS INTERCEPTOR
 
 let refreshPromise = null;
 
 axios.interceptors.response.use(
+  (response) => response,
 
-	(response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
-	async (error) => {
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
 
-		const originalRequest = error.config;
+      try {
+        if (refreshPromise) {
+          await refreshPromise;
 
-		if (
-			error.response?.status === 401 &&
-			!originalRequest._retry
-		) {
+          return axios(originalRequest);
+        }
 
-			originalRequest._retry = true;
+        refreshPromise = useUserStore.getState().refreshToken();
 
-			try {
+        await refreshPromise;
 
-				if (refreshPromise) {
+        refreshPromise = null;
 
-					await refreshPromise;
+        return axios(originalRequest);
+      } catch (refreshError) {
+        useUserStore.getState().logout();
 
-					return axios(originalRequest);
-				}
+        return Promise.reject(refreshError);
+      }
+    }
 
-				refreshPromise =
-					useUserStore
-						.getState()
-						.refreshToken();
-
-				await refreshPromise;
-
-				refreshPromise = null;
-
-				return axios(originalRequest);
-
-			} catch (refreshError) {
-
-				useUserStore.getState().logout();
-
-				return Promise.reject(refreshError);
-			}
-		}
-
-		return Promise.reject(error);
-	}
+    return Promise.reject(error);
+  },
 );

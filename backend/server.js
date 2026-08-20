@@ -27,28 +27,22 @@ const app = express();
 const server = createServer(app);
 
 export const io = new Server(server, {
-	cors: {
-		origin: "https://ai-mern-ecommerce-master.vercel.app",
-		credentials: true,
-	},
+  cors: {
+    origin: "https://ai-mern-ecommerce-master.vercel.app",
+    credentials: true,
+  },
 });
 
-io.on("connection",(socket)=>{
+io.on("connection", (socket) => {
+  console.log("User Connected:", socket.id);
 
-	console.log("User Connected:",socket.id);
+  socket.on("sendMessage", (message) => {
+    io.emit("receiveMessage", message);
+  });
 
-	socket.on("sendMessage",(message)=>{
-
-		io.emit(
-			"receiveMessage",
-			message
-		);
-	});
-
-	socket.on("disconnect",()=>{
-
-		console.log("User Disconnected");
-	});
+  socket.on("disconnect", () => {
+    console.log("User Disconnected");
+  });
 });
 
 const PORT = process.env.PORT || 5000;
@@ -60,10 +54,10 @@ app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 
 app.use(
-	cors({
-		origin: "https://ai-mern-ecommerce-master.vercel.app",
-		credentials: true,
-	})
+  cors({
+    origin: "https://ai-mern-ecommerce-master.vercel.app",
+    credentials: true,
+  }),
 );
 
 app.use("/api/auth", authRoutes);
@@ -78,31 +72,15 @@ app.use("/api/ai", aiRoutes);
 app.use("/api/chat", chatRoutes);
 
 if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/frontend/dist")));
 
-	app.use(
-		express.static(
-			path.join(__dirname, "/frontend/dist")
-		)
-	);
-
-	app.get("*", (req, res) => {
-
-		res.sendFile(
-			path.resolve(
-				__dirname,
-				"frontend",
-				"dist",
-				"index.html"
-			)
-		);
-	});
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+  });
 }
 
 server.listen(PORT, () => {
+  console.log("Server is running on http://localhost:" + PORT);
 
-	console.log(
-		"Server is running on http://localhost:" + PORT
-	);
-
-	connectDB();
+  connectDB();
 });

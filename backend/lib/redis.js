@@ -8,14 +8,14 @@ const redisUrl = process.env.UPSTASH_REDIS_URL;
 console.log("Redis URL:", redisUrl);
 
 export const redis = new Redis(redisUrl, {
-	maxRetriesPerRequest: null,
-	enableReadyCheck: false,
+  maxRetriesPerRequest: null,
+  enableReadyCheck: false,
 });
 
 redis.on("connect", () => {
-	console.log("✅ Redis Connected");
+  console.log("✅ Redis Connected");
 });
 
 redis.on("error", (err) => {
-	console.log("Redis Error:", err);
+  console.log("Redis Error:", err);
 });

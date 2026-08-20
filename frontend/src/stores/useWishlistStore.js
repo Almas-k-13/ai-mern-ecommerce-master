@@ -3,73 +3,57 @@ import axios from "../lib/axios";
 import toast from "react-hot-toast";
 
 export const useWishlistStore = create((set) => ({
+  wishlist: [],
+  loading: false,
 
-	wishlist: [],
-	loading: false,
+  getWishlist: async () => {
+    set({ loading: true });
 
-	getWishlist: async () => {
+    try {
+      const res = await axios.get("/wishlist");
 
-		set({ loading: true });
+      set({
+        wishlist: res.data,
+        loading: false,
+      });
+    } catch (error) {
+      console.log(error);
 
-		try {
+      set({ loading: false });
+    }
+  },
 
-			const res = await axios.get("/wishlist");
+  addToWishlist: async (productId) => {
+    try {
+      const res = await axios.post("/wishlist", {
+        productId,
+      });
 
-			set({
-				wishlist: res.data,
-				loading: false,
-			});
+      set((state) => ({
+        wishlist: [...state.wishlist, res.data],
+      }));
 
-		} catch (error) {
+      toast.success("Product added to wishlist");
+    } catch (error) {
+      console.log(error);
 
-			console.log(error);
+      toast.error(error.response?.data?.message || "Wishlist Error");
+    }
+  },
 
-			set({ loading: false });
-		}
-	},
+  removeFromWishlist: async (productId) => {
+    try {
+      await axios.delete(`/wishlist/${productId}`);
 
-	addToWishlist: async (productId) => {
+      set((state) => ({
+        wishlist: state.wishlist.filter(
+          (item) => item.product._id !== productId,
+        ),
+      }));
 
-		try {
-
-			const res = await axios.post("/wishlist", {
-				productId,
-			});
-
-			set((state) => ({
-				wishlist: [...state.wishlist, res.data],
-			}));
-
-			toast.success("Product added to wishlist");
-
-		} catch (error) {
-
-			console.log(error);
-
-			toast.error(
-				error.response?.data?.message ||
-				"Wishlist Error"
-			);
-		}
-	},
-
-	removeFromWishlist: async (productId) => {
-
-		try {
-
-			await axios.delete(`/wishlist/${productId}`);
-
-			set((state) => ({
-				wishlist: state.wishlist.filter(
-					(item) => item.product._id !== productId
-				),
-			}));
-
-			toast.success("Removed from wishlist");
-
-		} catch (error) {
-
-			console.log(error);
-		}
-	},
+      toast.success("Removed from wishlist");
+    } catch (error) {
+      console.log(error);
+    }
+  },
 }));

@@ -1,15 +1,15 @@
 import express from "express";
 import {
-	createProduct,
-	deleteProduct,
-	getAllProducts,
-	getFeaturedProducts,
-	getProductsByCategory,
-	getRecommendedProducts,
-	toggleFeaturedProduct,
-	searchProducts,
-	addReview,
-	updateProduct,
+  createProduct,
+  deleteProduct,
+  getAllProducts,
+  getFeaturedProducts,
+  getProductsByCategory,
+  getRecommendedProducts,
+  toggleFeaturedProduct,
+  searchProducts,
+  addReview,
+  updateProduct,
 } from "../controllers/product.controller.js";
 import { adminRoute, protectRoute } from "../middleware/auth.middleware.js";
 
@@ -24,12 +24,7 @@ router.get("/search", searchProducts);
 router.post("/", protectRoute, adminRoute, createProduct);
 router.patch("/:id", protectRoute, adminRoute, toggleFeaturedProduct);
 router.delete("/:id", protectRoute, adminRoute, deleteProduct);
-router.post(
-	"/:id/review",
-	protectRoute,
-	addReview
-);
+router.post("/:id/review", protectRoute, addReview);
 router.put("/:id", protectRoute, adminRoute, updateProduct);
-
 
 export default router;
